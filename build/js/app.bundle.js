@@ -14,13 +14,18 @@ var _ionicAngular = require('ionic-angular');
 
 var _ionicNative = require('ionic-native');
 
+var _home = require('./pages/home/home');
+
 var _tabs = require('./pages/tabs/tabs');
+
+var _data = require('./providers/data/data');
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 // http://ionicframework.com/docs/v2/api/config/Config/
 var MyApp = exports.MyApp = (_dec = (0, _ionicAngular.App)({
   template: '<ion-nav [root]="rootPage"></ion-nav>',
+  providers: [_data.Data],
   config: {} }), _dec(_class = function () {
   _createClass(MyApp, null, [{
     key: 'parameters',
@@ -37,6 +42,7 @@ var MyApp = exports.MyApp = (_dec = (0, _ionicAngular.App)({
     platform.ready().then(function () {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
+
       _ionicNative.StatusBar.styleDefault();
     });
   }
@@ -44,13 +50,13 @@ var MyApp = exports.MyApp = (_dec = (0, _ionicAngular.App)({
   return MyApp;
 }()) || _class);
 
-},{"./pages/tabs/tabs":5,"ionic-angular":339,"ionic-native":361}],2:[function(require,module,exports){
+},{"./pages/home/home":3,"./pages/tabs/tabs":4,"./providers/data/data":5,"ionic-angular":339,"ionic-native":361}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Page1 = undefined;
+exports.FavoritesPage = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -58,68 +64,58 @@ var _dec, _class;
 
 var _ionicAngular = require('ionic-angular');
 
-var _pokeballCard = require('../pokeball-card/pokeball-card');
+var _data = require('../../providers/data/data');
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Page1 = exports.Page1 = (_dec = (0, _ionicAngular.Page)({
-  templateUrl: 'build/pages/page1/page1.html'
+var FavoritesPage = exports.FavoritesPage = (_dec = (0, _ionicAngular.Page)({
+  templateUrl: 'build/pages/home/home.html'
 }), _dec(_class = function () {
-  _createClass(Page1, [{
-    key: 'initializeItems',
-    value: function initializeItems() {
-      this.pokeballs = [{
-        id: 0,
-        name: "Poké Ball",
-        description: "Un objet semblable à une capsule, qui capture les Pokémon sauvages. Il suffit pour cela de le jeter comme une balle.",
-        img: "Poké_ball_artwork.png",
-        bonus: 1
-      }, {
-        id: 1,
-        name: "Super Ball",
-        description: "Une Ball très performante dont le taux de réussite est supérieur à celui de la Poké Ball.",
-        img: "Super_ball_artwork.png",
-        bonus: 1.5
-      }, {
-        id: 2,
-        name: "Hyper Ball",
-        description: "Une Ball ultraperformante dont le taux de réussite est supérieur à celui de la Super Ball.",
-        img: "Hyper_ball_artwork.png",
-        bonus: 2
-      }, {
-        id: 3,
-        name: "Master Ball",
-        description: "La Master Ball est une Ball qui permet d'attraper n'importe quel Pokémon sauvage rencontré à coup sûr.",
-        img: "Master_ball_artwork.png",
-        bonus: 255
-      }, {
-        id: 4,
-        name: "Safari Ball",
-        description: "Une Poké Ball spéciale dont l'usage est réservé au Parc Safari. Elle est décorée d'un motif camouflage.",
-        img: "Safari_Ball_artwork.png",
-        bonus: 1
-      }];
+  _createClass(FavoritesPage, [{
+    key: 'update',
+    value: function update() {
+      this.pokeballs = data.getAllFavorited();
     }
   }], [{
     key: 'parameters',
     get: function get() {
-      return [[_ionicAngular.NavController]];
+      return [[_data.Data]];
     }
   }]);
 
-  function Page1(nav) {
-    _classCallCheck(this, Page1);
+  function FavoritesPage(data) {
+    _classCallCheck(this, FavoritesPage);
 
-    this.nav = nav;
-    this.initializeItems();
+    this.data = data;
+    this.favorites = [];
+    this.pokeballs = data.getAllFavorited();
     this.searchQuery = "";
   }
 
-  _createClass(Page1, [{
+  _createClass(FavoritesPage, [{
+    key: 'addToFavorites',
+    value: function addToFavorites(item) {
+      // this.pokeballs[item.id].stared = true;
+      // this.favorites.push(item.id);
+      this.data.addToFavorites(item.id);
+    }
+  }, {
+    key: 'deleteFromFavorites',
+    value: function deleteFromFavorites(item) {
+      // this.pokeballs[item.id].stared = false;
+      // this.favorites.pop(item.id);
+      this.data.deleteFromFavorites(item.id);
+    }
+  }, {
+    key: 'isStared',
+    value: function isStared(item) {
+      return this.data.isStared(item.id);
+    }
+  }, {
     key: 'getItems',
     value: function getItems(searchbar) {
       // Reset items back to all of the items
-      this.initializeItems();
+      this.pokeballs = this.data.getAllFavorited();
 
       // set q to the value of the searchbar
       var q = searchbar.value;
@@ -129,50 +125,25 @@ var Page1 = exports.Page1 = (_dec = (0, _ionicAngular.Page)({
         return;
       }
 
-      this.pokeballs = this.pokeballs.filter(function (v) {
+      this.pokeballs = this.data.getAllFavorited().filter(function (v) {
         if (v.name.toLowerCase().indexOf(q.toLowerCase()) > -1) {
           return true;
         }
         return false;
       });
     }
-  }, {
-    key: 'goTo',
-    value: function goTo(item) {
-      this.nav.push(_pokeballCard.PokeballCard, { item: item });
-    }
   }]);
 
-  return Page1;
+  return FavoritesPage;
 }()) || _class);
 
-},{"../pokeball-card/pokeball-card":4,"ionic-angular":339}],3:[function(require,module,exports){
+},{"../../providers/data/data":5,"ionic-angular":339}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Page2 = undefined;
-
-var _dec, _class;
-
-var _ionicAngular = require('ionic-angular');
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Page2 = exports.Page2 = (_dec = (0, _ionicAngular.Page)({
-  templateUrl: 'build/pages/page2/page2.html'
-}), _dec(_class = function Page2() {
-  _classCallCheck(this, Page2);
-}) || _class);
-
-},{"ionic-angular":339}],4:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.PokeballCard = undefined;
+exports.HomePage = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -180,28 +151,76 @@ var _dec, _class;
 
 var _ionicAngular = require('ionic-angular');
 
+var _data = require('../../providers/data/data');
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var PokeballCard = exports.PokeballCard = (_dec = (0, _ionicAngular.Page)({
-  templateUrl: 'build/pages/pokeball-card/pokeball-card.html'
+var HomePage = exports.HomePage = (_dec = (0, _ionicAngular.Page)({
+  templateUrl: 'build/pages/home/home.html'
 }), _dec(_class = function () {
-  _createClass(PokeballCard, null, [{
+  _createClass(HomePage, null, [{
     key: 'parameters',
     get: function get() {
-      return [[_ionicAngular.NavParams]];
+      return [[_data.Data]];
     }
   }]);
 
-  function PokeballCard(params) {
-    _classCallCheck(this, PokeballCard);
+  function HomePage(data) {
+    _classCallCheck(this, HomePage);
 
-    this.pokeball = params.data.item;
+    this.data = data;
+    this.favorites = [];
+    this.pokeballs = data.getAllPokeballs();
+    //this.initializeItems();
+    this.searchQuery = "";
   }
 
-  return PokeballCard;
+  _createClass(HomePage, [{
+    key: 'addToFavorites',
+    value: function addToFavorites(item) {
+      // this.pokeballs[item.id].stared = true;
+      // this.favorites.push(item.id);
+      this.data.addToFavorites(item.id);
+    }
+  }, {
+    key: 'deleteFromFavorites',
+    value: function deleteFromFavorites(item) {
+      // this.pokeballs[item.id].stared = false;
+      // this.favorites.pop(item.id);
+      this.data.deleteFromFavorites(item.id);
+    }
+  }, {
+    key: 'isStared',
+    value: function isStared(item) {
+      return this.data.isStared(item.id);
+    }
+  }, {
+    key: 'getItems',
+    value: function getItems(searchbar) {
+      // Reset items back to all of the items
+      this.pokeballs = this.data.getAllPokeballs();
+
+      // set q to the value of the searchbar
+      var q = searchbar.value;
+
+      // if the value is an empty string don't filter the items
+      if (q.trim() == '') {
+        return;
+      }
+
+      this.pokeballs = this.data.getAllPokeballs().filter(function (v) {
+        if (v.name.toLowerCase().indexOf(q.toLowerCase()) > -1) {
+          return true;
+        }
+        return false;
+      });
+    }
+  }]);
+
+  return HomePage;
 }()) || _class);
 
-},{"ionic-angular":339}],5:[function(require,module,exports){
+},{"../../providers/data/data":5,"ionic-angular":339}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -209,28 +228,183 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.TabsPage = undefined;
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _dec, _class;
 
 var _ionicAngular = require('ionic-angular');
 
-var _page = require('../page1/page1');
+var _favorites = require('../favorites/favorites');
 
-var _page2 = require('../page2/page2');
+var _home = require('../home/home');
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var TabsPage = exports.TabsPage = (_dec = (0, _ionicAngular.Page)({
   templateUrl: 'build/pages/tabs/tabs.html'
-}), _dec(_class = function TabsPage() {
-  _classCallCheck(this, TabsPage);
+}), _dec(_class = function () {
+  _createClass(TabsPage, null, [{
+    key: 'parameters',
+    get: function get() {
+      return [[_ionicAngular.NavController]];
+    }
+  }]);
 
-  // this tells the tabs component which Pages
-  // should be each tab's root Page
-  this.tab1Root = _page.Page1;
-  this.tab2Root = _page2.Page2;
-}) || _class);
+  function TabsPage(nav) {
+    _classCallCheck(this, TabsPage);
 
-},{"../page1/page1":2,"../page2/page2":3,"ionic-angular":339}],6:[function(require,module,exports){
+    // this tells the tabs component which Pages
+    // should be each tab's root Page
+    this.tab1Root = _home.HomePage;
+    this.tab2Root = _favorites.FavoritesPage;
+    this.nav = nav;
+  }
+
+  _createClass(TabsPage, [{
+    key: 'favorites',
+    value: function favorites() {
+      //let page = FavoritesPage.create();
+      //FavoritesPage.update();
+      this.nav.present(_favorites.FavoritesPage);
+    }
+  }]);
+
+  return TabsPage;
+}()) || _class);
+
+},{"../favorites/favorites":2,"../home/home":3,"ionic-angular":339}],5:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Data = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _dec, _class;
+//import {Http} from 'angular2/http';
+
+
+var _core = require('angular2/core');
+
+var _ionicAngular = require('ionic-angular');
+
+require('rxjs/add/operator/map');
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/*
+  Generated class for the Data provider.
+
+  See https://angular.io/docs/ts/latest/guide/dependency-injection.html
+  for more info on providers and Angular 2 DI.
+*/
+var Data = exports.Data = (_dec = (0, _core.Injectable)(), _dec(_class = function () {
+  function Data() {
+    _classCallCheck(this, Data);
+
+    this.storage = new _ionicAngular.Storage(_ionicAngular.SqlStorage, { name: 'pokeball-app' });
+    this.favorites = [];
+    this.pokeballs = this.buildPokeballs();
+  }
+
+  _createClass(Data, [{
+    key: 'getAllFavorited',
+    value: function getAllFavorited() {
+      var _this = this;
+
+      return this.pokeballs.filter(function (v) {
+        if (_this.favorites.indexOf(v.id) > -1) {
+          return true;
+        }
+        return false;
+      });
+    }
+  }, {
+    key: 'buildPokeballs',
+    value: function buildPokeballs() {
+      var pokeballs = [{
+        id: 0,
+        name: "Poké Ball",
+        description: "Un objet semblable à une capsule, qui capture les Pokémon sauvages. Il suffit pour cela de le jeter comme une balle.",
+        img: "Poké_ball_artwork.png",
+        bonus: 1,
+        price: 200,
+        generations: [1, 2, 3, 4, 5, 6]
+      }, {
+        id: 1,
+        name: "Super Ball",
+        description: "Une Ball très performante dont le taux de réussite est supérieur à celui de la Poké Ball.",
+        img: "Super_ball_artwork.png",
+        bonus: 1.5,
+        generations: [1, 2, 3, 4, 5, 6],
+        price: 600
+      }, {
+        id: 2,
+        name: "Hyper Ball",
+        description: "Une Ball ultraperformante dont le taux de réussite est supérieur à celui de la Super Ball.",
+        img: "Hyper_ball_artwork.png",
+        bonus: 2,
+        price: 1200,
+        generations: [1, 2, 3, 4, 5, 6]
+      }, {
+        id: 3,
+        name: "Master Ball",
+        description: "La Master Ball est une Ball qui permet d'attraper n'importe quel Pokémon sauvage rencontré à coup sûr.",
+        img: "Master_ball_artwork.png",
+        bonus: 255,
+        price: 'ø',
+        generations: [1, 2, 3, 4, 5, 6]
+      }, {
+        id: 4,
+        name: "Safari Ball",
+        description: "Une Poké Ball spéciale dont l'usage est réservé au Parc Safari. Elle est décorée d'un motif camouflage.",
+        img: "Safari_Ball_artwork.png",
+        bonus: 1,
+        price: "ø",
+        generations: [1, 2, 3, 4, 5, 6]
+      }];
+
+      return pokeballs;
+    }
+  }, {
+    key: 'getAllPokeballs',
+    value: function getAllPokeballs() {
+      return this.pokeballs;
+    }
+  }, {
+    key: 'addToFavorites',
+    value: function addToFavorites(id) {
+      this.favorites.push(id);
+    }
+  }, {
+    key: 'deleteFromFavorites',
+    value: function deleteFromFavorites(id) {
+      this.favorites.pop(id);
+    }
+  }, {
+    key: 'isStared',
+    value: function isStared(id) {
+      return this.favorites.indexOf(id) > -1;
+    }
+  }, {
+    key: 'getData',
+    value: function getData() {
+      return this.storage.get('favorites');
+    }
+  }, {
+    key: 'save',
+    value: function save(data) {
+      var newData = JSON.stringify(data);
+      this.storage.set('favorites', newData);
+    }
+  }]);
+
+  return Data;
+}()) || _class);
+
+},{"angular2/core":8,"ionic-angular":339,"rxjs/add/operator/map":421}],6:[function(require,module,exports){
 'use strict';"use strict";
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
@@ -27447,7 +27621,7 @@ var EventEmitter = (function (_super) {
     return EventEmitter;
 }(Subject_1.Subject));
 exports.EventEmitter = EventEmitter;
-},{"angular2/src/facade/lang":192,"angular2/src/facade/promise":194,"rxjs/Observable":416,"rxjs/Subject":418,"rxjs/observable/PromiseObservable":421,"rxjs/operator/toPromise":422}],185:[function(require,module,exports){
+},{"angular2/src/facade/lang":192,"angular2/src/facade/promise":194,"rxjs/Observable":416,"rxjs/Subject":418,"rxjs/observable/PromiseObservable":422,"rxjs/operator/toPromise":424}],185:[function(require,module,exports){
 'use strict';"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -69785,7 +69959,7 @@ var Observable = (function () {
 }());
 exports.Observable = Observable;
 
-},{"./util/SymbolShim":426,"./util/errorObject":427,"./util/root":431,"./util/toSubscriber":433,"./util/tryCatch":434}],417:[function(require,module,exports){
+},{"./util/SymbolShim":428,"./util/errorObject":429,"./util/root":433,"./util/toSubscriber":435,"./util/tryCatch":436}],417:[function(require,module,exports){
 "use strict";
 exports.empty = {
     isUnsubscribed: true,
@@ -69992,7 +70166,7 @@ var SubjectObservable = (function (_super) {
     return SubjectObservable;
 }(Observable_1.Observable));
 
-},{"./Observable":416,"./Subscriber":419,"./Subscription":420,"./subject/SubjectSubscription":423,"./symbol/rxSubscriber":424,"./util/ObjectUnsubscribedError":425,"./util/throwError":432}],419:[function(require,module,exports){
+},{"./Observable":416,"./Subscriber":419,"./Subscription":420,"./subject/SubjectSubscription":425,"./symbol/rxSubscriber":426,"./util/ObjectUnsubscribedError":427,"./util/throwError":434}],419:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -70185,7 +70359,7 @@ var SafeSubscriber = (function (_super) {
     return SafeSubscriber;
 }(Subscriber));
 
-},{"./Observer":417,"./Subscription":420,"./symbol/rxSubscriber":424,"./util/isFunction":429}],420:[function(require,module,exports){
+},{"./Observer":417,"./Subscription":420,"./symbol/rxSubscriber":426,"./util/isFunction":431}],420:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -70306,7 +70480,13 @@ var UnsubscriptionError = (function (_super) {
 }(Error));
 exports.UnsubscriptionError = UnsubscriptionError;
 
-},{"./util/errorObject":427,"./util/isArray":428,"./util/isFunction":429,"./util/isObject":430,"./util/tryCatch":434}],421:[function(require,module,exports){
+},{"./util/errorObject":429,"./util/isArray":430,"./util/isFunction":431,"./util/isObject":432,"./util/tryCatch":436}],421:[function(require,module,exports){
+"use strict";
+var Observable_1 = require('../../Observable');
+var map_1 = require('../../operator/map');
+Observable_1.Observable.prototype.map = map_1.map;
+
+},{"../../Observable":416,"../../operator/map":423}],422:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -70399,7 +70579,66 @@ function dispatchError(_a) {
     }
 }
 
-},{"../Observable":416,"../util/root":431}],422:[function(require,module,exports){
+},{"../Observable":416,"../util/root":433}],423:[function(require,module,exports){
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscriber_1 = require('../Subscriber');
+/**
+ * Similar to the well known `Array.prototype.map` function, this operator
+ * applies a projection to each value and emits that projection in the returned observable
+ *
+ * <img src="./img/map.png" width="100%">
+ *
+ * @param {Function} project the function to create projection
+ * @param {any} [thisArg] an optional argument to define what `this` is in the project function
+ * @returns {Observable} a observable of projected values
+ */
+function map(project, thisArg) {
+    if (typeof project !== 'function') {
+        throw new TypeError('argument is not a function. Are you looking for `mapTo()`?');
+    }
+    return this.lift(new MapOperator(project, thisArg));
+}
+exports.map = map;
+var MapOperator = (function () {
+    function MapOperator(project, thisArg) {
+        this.project = project;
+        this.thisArg = thisArg;
+    }
+    MapOperator.prototype.call = function (subscriber) {
+        return new MapSubscriber(subscriber, this.project, this.thisArg);
+    };
+    return MapOperator;
+}());
+var MapSubscriber = (function (_super) {
+    __extends(MapSubscriber, _super);
+    function MapSubscriber(destination, project, thisArg) {
+        _super.call(this, destination);
+        this.project = project;
+        this.count = 0;
+        this.thisArg = thisArg || this;
+    }
+    // NOTE: This looks unoptimized, but it's actually purposefully NOT
+    // using try/catch optimizations.
+    MapSubscriber.prototype._next = function (value) {
+        var result;
+        try {
+            result = this.project.call(this.thisArg, value, this.count++);
+        }
+        catch (err) {
+            this.destination.error(err);
+            return;
+        }
+        this.destination.next(result);
+    };
+    return MapSubscriber;
+}(Subscriber_1.Subscriber));
+
+},{"../Subscriber":419}],424:[function(require,module,exports){
 "use strict";
 var root_1 = require('../util/root');
 function toPromise(PromiseCtor) {
@@ -70422,7 +70661,7 @@ function toPromise(PromiseCtor) {
 }
 exports.toPromise = toPromise;
 
-},{"../util/root":431}],423:[function(require,module,exports){
+},{"../util/root":433}],425:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -70458,7 +70697,7 @@ var SubjectSubscription = (function (_super) {
 }(Subscription_1.Subscription));
 exports.SubjectSubscription = SubjectSubscription;
 
-},{"../Subscription":420}],424:[function(require,module,exports){
+},{"../Subscription":420}],426:[function(require,module,exports){
 "use strict";
 var SymbolShim_1 = require('../util/SymbolShim');
 /**
@@ -70469,7 +70708,7 @@ var SymbolShim_1 = require('../util/SymbolShim');
  */
 exports.rxSubscriber = SymbolShim_1.SymbolShim.for('rxSubscriber');
 
-},{"../util/SymbolShim":426}],425:[function(require,module,exports){
+},{"../util/SymbolShim":428}],427:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -70490,7 +70729,7 @@ var ObjectUnsubscribedError = (function (_super) {
 }(Error));
 exports.ObjectUnsubscribedError = ObjectUnsubscribedError;
 
-},{}],426:[function(require,module,exports){
+},{}],428:[function(require,module,exports){
 "use strict";
 var root_1 = require('./root');
 function polyfillSymbol(root) {
@@ -70560,30 +70799,30 @@ function ensureObservable(Symbol) {
 exports.ensureObservable = ensureObservable;
 exports.SymbolShim = polyfillSymbol(root_1.root);
 
-},{"./root":431}],427:[function(require,module,exports){
+},{"./root":433}],429:[function(require,module,exports){
 "use strict";
 // typeof any so that it we don't have to cast when comparing a result to the error object
 exports.errorObject = { e: {} };
 
-},{}],428:[function(require,module,exports){
+},{}],430:[function(require,module,exports){
 "use strict";
 exports.isArray = Array.isArray || (function (x) { return x && typeof x.length === 'number'; });
 
-},{}],429:[function(require,module,exports){
+},{}],431:[function(require,module,exports){
 "use strict";
 function isFunction(x) {
     return typeof x === 'function';
 }
 exports.isFunction = isFunction;
 
-},{}],430:[function(require,module,exports){
+},{}],432:[function(require,module,exports){
 "use strict";
 function isObject(x) {
     return x != null && typeof x === 'object';
 }
 exports.isObject = isObject;
 
-},{}],431:[function(require,module,exports){
+},{}],433:[function(require,module,exports){
 (function (global){
 "use strict";
 var objectTypes = {
@@ -70605,12 +70844,12 @@ if (freeGlobal && (freeGlobal.global === freeGlobal || freeGlobal.window === fre
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}],432:[function(require,module,exports){
+},{}],434:[function(require,module,exports){
 "use strict";
 function throwError(e) { throw e; }
 exports.throwError = throwError;
 
-},{}],433:[function(require,module,exports){
+},{}],435:[function(require,module,exports){
 "use strict";
 var Subscriber_1 = require('../Subscriber');
 var rxSubscriber_1 = require('../symbol/rxSubscriber');
@@ -70627,7 +70866,7 @@ function toSubscriber(nextOrObserver, error, complete) {
 }
 exports.toSubscriber = toSubscriber;
 
-},{"../Subscriber":419,"../symbol/rxSubscriber":424}],434:[function(require,module,exports){
+},{"../Subscriber":419,"../symbol/rxSubscriber":426}],436:[function(require,module,exports){
 "use strict";
 var errorObject_1 = require('./errorObject');
 var tryCatchTarget;
@@ -70647,7 +70886,7 @@ function tryCatch(fn) {
 exports.tryCatch = tryCatch;
 ;
 
-},{"./errorObject":427}]},{},[1])
+},{"./errorObject":429}]},{},[1])
 
 
 //# sourceMappingURL=app.bundle.js.map

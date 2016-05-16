@@ -8628,15 +8628,20 @@ body {
   font-size: 1.4rem;
   background-color: #fff; }
 
-.page1 .thumbnail {
+.home .thumbnail {
   width: auto;
   height: 128px; }
 
-.page1 .thumbnail-max {
+.home .thumbnail-max, .home .main-img {
   width: auto;
-  height: 256px; }
+  height: 200px;
+  margin-left: auto;
+  margin-right: auto; }
 
-.pokeball-card-page .main-img {
-  width: auto;
-  height: 256px;
-  margin: auto; }
+.home .max-width {
+  width: 100%;
+  text-align: center;
+  background-color: #1c1b2b; }
+
+.home .center-title {
+  text-align: center; }

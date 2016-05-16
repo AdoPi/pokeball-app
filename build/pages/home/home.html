@@ -1,0 +1,74 @@
+<ion-navbar *navbar>
+  <ion-title>Pokeball Listing</ion-title>
+</ion-navbar>
+<ion-header-bar class="bar-light bar-subheader">
+  <ion-searchbar [(ngModel)]="searchQuery" (input)="getItems($event)"></ion-searchbar>
+</ion-header-bar>
+
+
+
+<ion-content padding class="home">
+  <ion-list>
+    <div  *ngFor="#pokeball of pokeballs">
+      <ion-card>
+        <ion-item>
+          <ion-avatar item-left>
+            <img src="build/imgs/{{pokeball.img}}">
+          </ion-avatar>
+          <h2>{{pokeball.name}}</h2>
+          <p>Generation {{pokeball.generations.toString()}}</p>
+        </ion-item>
+
+        <ion-item class="max-width">
+          <img class="thumbnail-max" src="build/imgs/{{pokeball.img}}" alt="" />
+        </ion-item>
+
+        <ion-card-content>
+          <p><br/>{{pokeball.description}}</p>
+        </ion-card-content>
+
+
+
+        <ion-row>
+          <ion-col center text-center>
+
+            <div *ngIf="isStared(pokeball)">
+              <button round large class danger="" (click)="deleteFromFavorites(pokeball)">
+                Stared
+                <ion-icon name='star'></ion-icon>
+              </button>
+            </div>
+
+            <div *ngIf="!isStared(pokeball)">
+              <button round large class="" (click)="addToFavorites(pokeball)">
+                Stars
+                <ion-icon name='star'></ion-icon>
+              </button>
+            </div>
+
+
+          </ion-col>
+
+          <ion-col>
+              <ion-item >
+                <ion-icon item-left name='star'></ion-icon>
+                {{pokeball.bonus}} Bonus
+              </ion-item>
+          </ion-col>
+
+          <ion-col>
+              <ion-item >
+                <ion-icon item-left name='cash'></ion-icon>
+                {{pokeball.price}}
+            </ion-item>
+          </ion-col>
+
+        </ion-row>
+
+
+      </ion-card>
+    </div>
+
+  </ion-list>
+
+</ion-content>
