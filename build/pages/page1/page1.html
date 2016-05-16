@@ -1,0 +1,26 @@
+<ion-navbar *navbar>
+  <ion-title>Pokeball Listing</ion-title>
+</ion-navbar>
+
+<ion-content padding class="page1">
+  <ion-searchbar [(ngModel)]="searchQuery" (input)="getItems($event)"></ion-searchbar>
+
+  <ion-list>
+    <!-- <ion-item *ngFor="#pokeball of pokeballs">
+      <ion-content>
+        <button (click)="goToPage(pokeball.id)"
+        <img src="{{pokeball.img}}" class="thumbnail"/>
+        {{pokeball.name}}
+      </button>
+      </ion-content>
+    </ion-item> -->
+
+    <button ion-item *ngFor="#pokeball of pokeballs" (click)="goTo(pokeball)">
+      <img class="thumbnail" src="build/imgs/{{pokeball.img}}" />
+      {{ pokeball.name}}
+    </button>
+
+
+  </ion-list>
+
+</ion-content>

@@ -1,0 +1,45 @@
+
+<ion-navbar *navbar>
+  <ion-title>
+    {{pokeball.name}}
+  </ion-title>
+</ion-navbar>
+
+<ion-content class="pokeball-card-page">
+  <ion-card>
+
+    <ion-item>
+      <ion-avatar item-left>
+        <img src="build/imgs/{{pokeball.img}}">
+      </ion-avatar>
+      <h2>{{pokeball.name}}</h2>
+      <!-- <p>{{}}</p> -->
+    </ion-item>
+
+    <ion-item>
+      <img class="main-img" src="build/imgs/{{pokeball.img}}">
+    </ion-item>
+
+    <ion-card-content>
+    <p>{{pokeball.description}}</p>
+    </ion-card-content>
+
+    <ion-item>
+      <ion-item primary clear item-left>
+        <ion-icon name="ion-ios-flame"></ion-icon>
+        <div>Bonus {{pokeball.bonus}}</div>
+      </ion-item>
+
+
+    <!-- <button primary item-right>
+      <ion-icon name="star"></ion-icon>
+    </button> -->
+  </ion-item>
+
+
+  </ion-card>
+
+
+
+
+</ion-content>
