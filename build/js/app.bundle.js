@@ -79,16 +79,16 @@ var FavoritesPage = exports.FavoritesPage = (_dec = (0, _ionicAngular.Page)({
   }], [{
     key: 'parameters',
     get: function get() {
-      return [[_data.Data]];
+      return [[_ionicAngular.NavParams]];
     }
   }]);
 
-  function FavoritesPage(data) {
+  function FavoritesPage(params) {
     _classCallCheck(this, FavoritesPage);
 
-    this.data = data;
+    this.data = params.data;
     this.favorites = [];
-    this.pokeballs = data.getAllFavorited();
+    this.pokeballs = this.data.getAllFavorited();
     this.searchQuery = "";
   }
 
@@ -161,16 +161,16 @@ var HomePage = exports.HomePage = (_dec = (0, _ionicAngular.Page)({
   _createClass(HomePage, null, [{
     key: 'parameters',
     get: function get() {
-      return [[_data.Data]];
+      return [[_ionicAngular.NavParams]];
     }
   }]);
 
-  function HomePage(data) {
+  function HomePage(params) {
     _classCallCheck(this, HomePage);
 
-    this.data = data;
+    this.data = params.data;
     this.favorites = [];
-    this.pokeballs = data.getAllPokeballs();
+    this.pokeballs = this.data.getAllPokeballs();
     //this.initializeItems();
     this.searchQuery = "";
   }
@@ -236,6 +236,8 @@ var _ionicAngular = require('ionic-angular');
 
 var _favorites = require('../favorites/favorites');
 
+var _data = require('../../providers/data/data');
+
 var _home = require('../home/home');
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -246,18 +248,18 @@ var TabsPage = exports.TabsPage = (_dec = (0, _ionicAngular.Page)({
   _createClass(TabsPage, null, [{
     key: 'parameters',
     get: function get() {
-      return [[_ionicAngular.NavController]];
+      return [[_data.Data]];
     }
   }]);
 
-  function TabsPage(nav) {
+  function TabsPage(data) {
     _classCallCheck(this, TabsPage);
 
     // this tells the tabs component which Pages
     // should be each tab's root Page
     this.tab1Root = _home.HomePage;
     this.tab2Root = _favorites.FavoritesPage;
-    this.nav = nav;
+    this.data = data;
   }
 
   _createClass(TabsPage, [{
@@ -265,14 +267,14 @@ var TabsPage = exports.TabsPage = (_dec = (0, _ionicAngular.Page)({
     value: function favorites() {
       //let page = FavoritesPage.create();
       //FavoritesPage.update();
-      this.nav.present(_favorites.FavoritesPage);
+      // this.nav.push(FavoritesPage);
     }
   }]);
 
   return TabsPage;
 }()) || _class);
 
-},{"../favorites/favorites":2,"../home/home":3,"ionic-angular":339}],5:[function(require,module,exports){
+},{"../../providers/data/data":5,"../favorites/favorites":2,"../home/home":3,"ionic-angular":339}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -306,20 +308,14 @@ var Data = exports.Data = (_dec = (0, _core.Injectable)(), _dec(_class = functio
 
     this.storage = new _ionicAngular.Storage(_ionicAngular.SqlStorage, { name: 'pokeball-app' });
     this.favorites = [];
+    this.favoritesId = [];
     this.pokeballs = this.buildPokeballs();
   }
 
   _createClass(Data, [{
     key: 'getAllFavorited',
     value: function getAllFavorited() {
-      var _this = this;
-
-      return this.pokeballs.filter(function (v) {
-        if (_this.favorites.indexOf(v.id) > -1) {
-          return true;
-        }
-        return false;
-      });
+      return this.favorites;
     }
   }, {
     key: 'buildPokeballs',
@@ -376,17 +372,19 @@ var Data = exports.Data = (_dec = (0, _core.Injectable)(), _dec(_class = functio
   }, {
     key: 'addToFavorites',
     value: function addToFavorites(id) {
-      this.favorites.push(id);
+      this.favorites.push(this.pokeballs[id]);
+      this.favoritesId.push(id);
     }
   }, {
     key: 'deleteFromFavorites',
     value: function deleteFromFavorites(id) {
-      this.favorites.pop(id);
+      this.favoritesId.pop(id);
+      this.favorites.pop(this.pokeballs[id]);
     }
   }, {
     key: 'isStared',
     value: function isStared(id) {
-      return this.favorites.indexOf(id) > -1;
+      return this.favoritesId.indexOf(id) > -1;
     }
   }, {
     key: 'getData',
